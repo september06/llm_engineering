@@ -30,4 +30,19 @@ class Get_document:
     def __init__(self, file_path):
         self.file_path = file_path
 
-    def
+    def get_text_from_file(self):
+        """Reads the content of the .docx file if it is exist
+      and extract the paragraphs as list of strings"""
+        if not self.file_path or os.path.exists(self.file_path)
+            return ""
+        try:
+            doc = Document(self.file_path)
+            paragraphs_list_as_text = []
+            for para in doc.paragraphs:
+                if para.text.strip():
+                    paragraphs_list_as_text.append(para.text)
+            return  "\n".join( paragraphs_list_as_text)
+        except Exception as e:
+            print(f"An error occurred:{e}")
+            return ""
+
