@@ -138,7 +138,6 @@ def export_markdown_table_to_excel(markdown_text):
     lines = [line.strip() for line in markdown_text.split('\n') if line.strip().startswith('|')]
     if len(lines) < 3:
         return None
-    
     headers = [col.strip() for col in lines[0].split('|')[1:-1]]
     data = []
     for line in lines[2:]:
@@ -153,26 +152,31 @@ def export_markdown_table_to_excel(markdown_text):
     output_file = "test_cases.xlsx"
     df.to_excel(output_file, index=False)
     return output_file
+# ממשק Gradio משודרג ומגניב
+with gr.Blocks(theme=gr.themes.Glass()) as demo:
+    # כותרת ראשית ממותגת AI
+    gr.Markdown("# 🤖 AI-Powered QA Test Case Generator")
+    gr.Markdown("###ואקסל ברגע Test Cases ל(.docx) ממיר מסמכי דרישות")
+    
+    with gr.Row():
+        file_input = gr.File(label="📂 העלה מסמך דרישות (.docx)", file_types=[".docx"])
+    
+    with gr.Row():
+        submit_btn = gr.Button("🚀 צור מקרי בדיקה באמצעות AI", variant="primary", scale=2)
+    
+    with gr.Tabs():
+        with gr.TabItem("📊 טבלת מקרי בדיקה (Markdown)"):
+            markdown_output = gr.Markdown(label="תוצאות בדיקה")
+            
+        with gr.TabItem("📥 הורדת קובץ"):
+            with gr.Row():
+                excel_output = gr.File(label="הורד קובץ Excel מוכן (`test_cases.xlsx`)", visible=True)
 
-# ממשק Gradio
-with gr.Blocks(theme=gr.themes.Soft()) as demo:
-    gr.Markdown("# 📄 אוטומציה ליצירת תרחישי בדיקה (Test Cases)")
-    
-    with gr.Row():
-        file_input = gr.File(label="העלה מסמך דרישות (.docx)", file_types=[".docx"])
-    
-    submit_btn = gr.Button("צור בדיקות", variant="primary")
-    
-    with gr.Row():
-        markdown_output = gr.Markdown(label="תוצאות בדיקה")
-    
-    with gr.Row():
-        excel_output = gr.File(label="הורד קובץ Excel", visible=True)
-
+    # חיבור הכפתור לפונקציה
     submit_btn.click(
         fn=process_requirements_and_generate_tests,
         inputs=[file_input],
         outputs=[markdown_output, excel_output]
     )
 
-demo.launch(share=True)
+demo.launch()
